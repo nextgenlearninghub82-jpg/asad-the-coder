@@ -2,91 +2,112 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Asad-the-coder | Mood Jukebox</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Asad-the-coder | Interactive Vibe Matrix</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
   <style>
-    body { margin: 0; overflow: hidden; background: #050505; color: white; font-family: sans-serif; }
-    #canvas-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1; }
-    .ui-layer { position: relative; z-index: 10; pointer-events: none; }
+    body { margin: 0; overflow: hidden; background: #050505; color: white; font-family: sans-serif; height: 100dvh; width: 100vw; }
+    #canvas-container { position: absolute; top: 0; left: 0; width: 100vw; height: 100dvh; z-index: 1; }
+    .ui-layer { position: relative; z-index: 10; pointer-events: none; height: 100dvh; display: flex; flex-direction: column; justify-content: space-between; padding: 1.25rem; }
     .clickable { pointer-events: auto; }
-    
-    /* Animated floating text particles */
+
+    /* Animated Watermarks */
     .floating-word {
       position: absolute;
-      color: rgba(255, 255, 255, 0.15);
-      font-size: 1.2rem;
+      color: rgba(255, 182, 193, 0.45); 
+      font-size: 1.4rem;
       font-weight: bold;
       pointer-events: none;
       white-space: nowrap;
-      animation: floatUp 12s linear infinite;
+      animation: floatUp 9s linear infinite;
+      text-shadow: 0 0 8px rgba(255,105,180,0.3);
     }
 
     @keyframes floatUp {
       0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
-      20% { opacity: 0.2; }
-      80% { opacity: 0.2; }
+      15% { opacity: 1; }
+      85% { opacity: 1; }
       100% { transform: translateY(-10vh) rotate(15deg); opacity: 0; }
     }
   </style>
 </head>
-<body class="w-screen h-screen relative bg-gradient-to-br from-purple-950 via-black to-blue-950 transition-colors duration-1000">
+<body id="bg-element" class="relative bg-gradient-to-br from-pink-950 via-rose-950 to-black transition-colors duration-1000">
 
   <!-- 3D Canvas Background -->
   <div id="canvas-container"></div>
 
-  <!-- Watermark Text Layer -->
+  <!-- Floating Watermarks -->
   <div id="watermark-layer" class="absolute inset-0 z-0 overflow-hidden pointer-events-none"></div>
 
   <!-- UI Overlay -->
-  <div class="ui-layer flex flex-col justify-between h-full p-6">
+  <div class="ui-layer">
     
-    <!-- Header -->
-    <header class="flex justify-between items-center">
-      <div class="bg-black/50 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full clickable">
-        <h1 class="text-xs font-bold tracking-widest uppercase text-cyan-400">Asad-the-coder</h1>
+    <!-- Top Bar Header -->
+    <header class="flex flex-col gap-2">
+      <div class="flex justify-between items-center">
+        <div class="bg-black/60 backdrop-blur-md border border-pink-500/30 px-4 py-1.5 rounded-full clickable shadow-lg">
+          <h1 class="text-xs font-bold tracking-widest uppercase text-pink-400">Asad-the-coder</h1>
+        </div>
+        <button onclick="openNote()" class="clickable px-4 py-1.5 rounded-full bg-pink-500/20 border border-pink-400/50 text-pink-200 text-xs font-bold shadow-[0_0_12px_rgba(236,72,153,0.3)] hover:scale-105">
+          💖 Special Note
+        </button>
       </div>
-      <div class="flex space-x-2 bg-black/50 backdrop-blur-md p-1.5 rounded-full border border-white/10 clickable">
-        <button onclick="changeVibe('#8b5cf6', 'from-purple-950 via-black to-blue-950')" class="px-3 py-1 rounded-full text-xs font-semibold hover:bg-white/20">Cyberpunk</button>
-        <button onclick="changeVibe('#3b82f6', 'from-gray-950 via-blue-950 to-black')" class="px-3 py-1 rounded-full text-xs font-semibold hover:bg-white/20">Midnight Rain</button>
-        <button onclick="changeVibe('#f43f5e', 'from-rose-950 via-purple-950 to-black')" class="px-3 py-1 rounded-full text-xs font-semibold hover:bg-white/20">Retro Sunset</button>
+
+      <!-- Theme/Vibe Switcher -->
+      <div class="flex gap-2 bg-black/60 backdrop-blur-md p-1.5 rounded-xl border border-white/10 clickable overflow-x-auto">
+        <button onclick="changeVibe('#ec4899', 'from-pink-950 via-rose-950 to-black')" class="px-3 py-1 rounded-full text-xs font-semibold bg-pink-600/30 text-pink-200 hover:bg-pink-600/50 whitespace-nowrap">🌹 Romantic Glow</button>
+        <button onclick="changeVibe('#8b5cf6', 'from-purple-950 via-black to-blue-950')" class="px-3 py-1 rounded-full text-xs font-semibold bg-purple-600/30 text-purple-200 hover:bg-purple-600/50 whitespace-nowrap">🌌 Cyberpunk</button>
+        <button onclick="changeVibe('#3b82f6', 'from-gray-950 via-blue-950 to-black')" class="px-3 py-1 rounded-full text-xs font-semibold bg-blue-600/30 text-blue-200 hover:bg-blue-600/50 whitespace-nowrap">🌧️ Midnight Rain</button>
       </div>
     </header>
 
-    <!-- Center Surprise Button -->
-    <div class="flex justify-center">
-      <button onclick="openNote()" class="clickable px-6 py-3 rounded-full bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/50 text-white font-medium shadow-2xl transition-all hover:scale-105 active:scale-95">
-        ✨ Open Special Note
-      </button>
+    <!-- Interactive Dashboard Actions Overlay -->
+    <div class="flex flex-col items-center justify-center pointer-events-none gap-3 my-auto">
+      <p class="text-[11px] text-pink-300/80 tracking-widest uppercase bg-black/40 px-3 py-1 rounded-full border border-pink-500/20 backdrop-blur-sm">Interactive Core Dashboard</p>
+      <div class="flex flex-wrap justify-center gap-2 max-w-xs clickable">
+        <button onclick="triggerHeartBurst()" class="px-3 py-2 rounded-xl bg-pink-500/20 border border-pink-500/40 text-xs font-semibold text-pink-200 backdrop-blur-md hover:bg-pink-500/40 active:scale-95 transition-all shadow-lg">
+          💘 Burst Hearts
+        </button>
+        <button onclick="toggleSpeed()" class="px-3 py-2 rounded-xl bg-purple-500/20 border border-purple-500/40 text-xs font-semibold text-purple-200 backdrop-blur-md hover:bg-purple-500/40 active:scale-95 transition-all shadow-lg">
+          ⚡ Sphere Turbo
+        </button>
+        <button onclick="changePlaylist('37i9dQZF1DX8Ueb1233S12')" class="px-3 py-2 rounded-xl bg-blue-500/20 border border-blue-500/40 text-xs font-semibold text-blue-200 backdrop-blur-md hover:bg-blue-500/40 active:scale-95 transition-all shadow-lg">
+          🎶 Relax Beats
+        </button>
+        <button onclick="changePlaylist('37i9dQZF1DX70RN34C3981')" class="px-3 py-2 rounded-xl bg-rose-500/20 border border-rose-500/40 text-xs font-semibold text-rose-200 backdrop-blur-md hover:bg-rose-500/40 active:scale-95 transition-all shadow-lg">
+          💕 Romantic Hits
+        </button>
+      </div>
     </div>
 
     <!-- Music Player Footer -->
-    <footer class="flex justify-between items-end">
-      <div class="bg-black/60 backdrop-blur-lg border border-white/10 p-3 rounded-2xl w-80 clickable">
-        <p class="text-xs font-semibold mb-2 text-cyan-400">🎵 Vibe Playlist</p>
-        <iframe src="https://open.spotify.com/embed/playlist/37i9dQZF1DX8Ueb1233S12?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" class="rounded-xl" allow="autoplay"></iframe>
-      </div>
-      <div class="text-xs text-gray-400 bg-black/40 backdrop-blur-md px-3 py-2 rounded-xl border border-white/5">
-        Built by <span class="text-cyan-400 font-bold">Asad-the-coder</span>
+    <footer class="flex w-full justify-center clickable pb-2">
+      <div class="bg-black/70 backdrop-blur-lg border border-pink-500/20 p-2.5 rounded-2xl w-full max-w-sm shadow-2xl">
+        <div class="flex justify-between items-center mb-1.5 px-1">
+          <p class="text-xs font-semibold text-pink-400">🎵 Music Dashboard</p>
+          <span class="text-[10px] text-gray-400">Asad-the-coder Edition</span>
+        </div>
+        <iframe id="spotify-player" src="https://open.spotify.com/embed/playlist/37i9dQZF1DX70RN34C3981?utm_source=generator&theme=0" width="100%" height="80" frameBorder="0" class="rounded-xl" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"></iframe>
       </div>
     </footer>
   </div>
 
-  <!-- Surprise Modal -->
-  <div id="modal" class="hidden absolute inset-0 z-30 flex items-center justify-center p-4 bg-black/70 backdrop-blur-md">
-    <div class="bg-gray-900 border border-white/20 rounded-3xl p-6 max-w-sm w-full text-center shadow-2xl">
-      <h3 class="text-xl font-bold mb-2">💖 A Secret Note</h3>
-      <p class="text-sm text-gray-300 mb-6 leading-relaxed">
-        "Every line of code and every visual detail here was crafted to surprise you and bring a smile to your face!"
+  <!-- Secret Message Modal -->
+  <div id="modal" class="hidden absolute inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md clickable">
+    <div class="bg-gradient-to-b from-gray-900 to-rose-950 border border-pink-500/40 rounded-3xl p-6 max-w-sm w-full text-center shadow-[0_0_30px_rgba(244,63,94,0.3)]">
+      <div class="text-4xl mb-2 animate-bounce">💖</div>
+      <h3 class="text-xl font-bold mb-2 text-pink-200">For Someone Special</h3>
+      <p class="text-xs text-gray-200 mb-6 leading-relaxed">
+        "I built this digital universe piece by piece. Every floating word, every color blend, and every note playing here was designed with love to surprise you!"
       </p>
-      <button onclick="closeNote()" class="w-full py-2.5 rounded-xl bg-white text-black font-semibold hover:bg-gray-200">Close</button>
+      <button onclick="closeNote()" class="w-full py-2.5 rounded-xl bg-gradient-to-r from-pink-500 to-rose-500 text-white font-bold hover:opacity-90 shadow-lg">Close Note</button>
     </div>
   </div>
 
   <script>
-    // 1. Floating Words Generator
+    // 1. Watermark Generator
     const words = ["debonair boy", "mr asad", "hacker", "coder", "builder", "your love", "Asad-the-coder"];
     const layer = document.getElementById('watermark-layer');
     
@@ -94,47 +115,67 @@
       const el = document.createElement('div');
       el.className = 'floating-word';
       el.innerText = words[Math.floor(Math.random() * words.length)];
-      el.style.left = Math.random() * 90 + 'vw';
-      el.style.animationDuration = (8 + Math.random() * 6) + 's';
+      el.style.left = (Math.random() * 75) + 'vw';
+      el.style.animationDuration = (6 + Math.random() * 4) + 's';
       layer.appendChild(el);
-      setTimeout(() => el.remove(), 14000);
+      setTimeout(() => el.remove(), 10000);
     }
-    setInterval(createWord, 1200);
+    setInterval(createWord, 700);
 
-    // 2. Three.js 3D Sphere Scene
+    // 2. Three.js Interactive Sphere
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById('canvas-container').appendChild(renderer.domElement);
 
-    const geometry = new THREE.IcosahedronGeometry(2, 2);
-    const material = new THREE.MeshStandardMaterial({ color: 0x8b5cf6, wireframe: true });
+    const geometry = new THREE.IcosahedronGeometry(1.2, 2); 
+    const material = new THREE.MeshStandardMaterial({ color: 0xec4899, wireframe: true });
     const sphere = new THREE.Mesh(geometry, material);
     scene.add(sphere);
 
-    const light = new THREE.PointLight(0xffffff, 1, 100);
+    // Light setup
+    const light = new THREE.PointLight(0xffffff, 1.2, 100);
     light.position.set(10, 10, 10);
     scene.add(light);
-    camera.position.z = 5;
+    camera.position.z = 5.5;
+
+    let rotationSpeed = 0.005;
 
     function animate() {
       requestAnimationFrame(animate);
-      sphere.rotation.x += 0.005;
-      sphere.rotation.y += 0.008;
+      sphere.rotation.x += rotationSpeed;
+      sphere.rotation.y += rotationSpeed * 1.5;
       renderer.render(scene, camera);
     }
     animate();
 
-    // 3. Helper Functions
+    // 3. Interactive Dashboard Functions
     function changeVibe(colorHex, bgClasses) {
       material.color.setHex(colorHex.replace('#', '0x'));
-      document.body.className = `w-screen h-screen relative bg-gradient-to-br ${bgClasses} transition-colors duration-1000`;
+      document.getElementById('bg-element').className = `relative bg-gradient-to-br ${bgClasses} transition-colors duration-1000`;
+    }
+
+    function toggleSpeed() {
+      rotationSpeed = rotationSpeed === 0.005 ? 0.025 : 0.005;
+    }
+
+    function triggerHeartBurst() {
+      confetti({
+        particleCount: 80,
+        spread: 100,
+        origin: { y: 0.5 },
+        colors: ['#ec4899', '#f43f5e', '#ffffff']
+      });
+    }
+
+    function changePlaylist(playlistId) {
+      document.getElementById('spotify-player').src = `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=generator&theme=0`;
     }
 
     function openNote() {
       document.getElementById('modal').classList.remove('hidden');
-      confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+      triggerHeartBurst();
     }
 
     function closeNote() {
